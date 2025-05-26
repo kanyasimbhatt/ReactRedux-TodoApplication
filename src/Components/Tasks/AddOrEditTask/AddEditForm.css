@@ -1,0 +1,79 @@
+.add-edit-form {
+  max-width: 100%;
+  padding: 0 30px 20px 30px;
+  background-color: rgba(0, 0, 0, 0.486);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  border-radius: 10px;
+  gap: 30px;
+}
+
+.add-edit-form-light {
+  background-color: transparent;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  color: black;
+  max-width: 100%;
+  padding: 0 30px 20px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  border-radius: 10px;
+  gap: 30px;
+}
+
+.add-edit-form-wrapper {
+  height: calc(100vh - 190px);
+  padding: 60px;
+}
+
+.input-tag {
+  border: none;
+  height: 50px;
+  min-width: 80vw;
+  box-sizing: border-box;
+  background-color: rgba(83, 83, 83, 0.301);
+  border-radius: 5px;
+  padding: 0 8px 0 8px;
+}
+
+.input-light {
+  height: 50px;
+  min-width: 80vw;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: transparent;
+  border: 2px solid rgb(133, 133, 121);
+  color: rgb(66, 66, 61);
+  border-radius: 5px;
+  padding: 0 8px 0 8px;
+}
+
+.input-light::placeholder {
+  color: rgb(66, 66, 61);
+}
+
+.error-message {
+  color: red;
+}
+
+@media screen and (max-width: 640px) {
+  #input-tag {
+    min-width: 70vw;
+  }
+}
+
+@media screen and (max-width: 460px) {
+  .add-edit-form {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #input-tag {
+    min-width: 80vw;
+  }
+}

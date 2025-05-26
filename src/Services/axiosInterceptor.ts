@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const TaskInstance = axios.create({
-  baseURL: "https://ca32a16515bbd3cdd965.free.beeceptor.com/api",
+  baseURL: "https://dummyjson.com/",
   headers: {
     "Content-Type": "application/json",
   },
@@ -25,6 +25,5 @@ TaskInstance.interceptors.response.use(
     if (error.response) {
       console.log("Response: ", error.response.message);
     }
-    Promise.reject(error);
   }
 );

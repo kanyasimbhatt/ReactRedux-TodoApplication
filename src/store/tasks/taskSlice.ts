@@ -16,10 +16,19 @@ type ReceivedData = {
   status: TodoStatus;
 };
 
+async function sendData(newTask: Task) {
+  try {
+    console.log(newTask);
+    await TaskInstance.post("/todos/add", newTask);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 const getInitialData = async () => {
   try {
-    const data = (await TaskInstance.get("/tasks")) as Task[];
-    dataFromAPI = { tasks: data };
+    const response = await TaskInstance.get("/todos");
+    dataFromAPI = { tasks: response.data.tasks };
   } catch (err) {
     console.log(err);
   }
@@ -40,20 +49,45 @@ const TaskSlice = createSlice({
       };
 
       state.tasks.push(newTask);
-      async function sendData() {
+
+      sendData(newTask);
+    },
+
+    editTasks: (state, action: PayloadAction<Task>) => {
+      state.tasks = dataFromAPI.tasks;
+      const taskIndex = state.tasks.findIndex(
+        (task: Task) => task.id === action.payload.id
+      );
+      state.tasks[taskIndex] = action.payload;
+
+      async function editTask() {
         try {
-          await TaskInstance.post("/tasks", {
-            body: JSON.stringify(newTask),
-          });
+          const response = await TaskInstance.put(
+            `todos/${action.payload.id}`,
+            action.payload
+          );
+          console.log(response);
         } catch (err) {
           console.log(err);
         }
       }
+      editTask();
+    },
+    setTasks: (state: TaskStore, action: PayloadAction<Task[]>) => {
+      state.tasks = action.payload;
+    },
 
-      sendData();
+    deleteTasks: (state, action: PayloadAction<string>) => {
+      state.tasks = state.tasks.filter(
+        (task: Task) => task.id === action.payload
+      );
+      async function deleteTask() {
+        await TaskInstance.delete(`tasks/${action.payload}`);
+      }
+      deleteTask();
     },
   },
 });
 
-export const { addTask } = TaskSlice.actions;
+export const { addTask, editTasks, setTasks, deleteTasks } = TaskSlice.actions;
 export default TaskSlice.reducer;

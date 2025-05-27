@@ -1,13 +1,21 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import { TaskInstance } from "../../Services/axiosInterceptor";
-import { TodoStatus, type Task } from "../../Types/Tasks/tasks";
+import { type Task, type TodoStatus } from "../../Components/Types/Tasks/types";
 
 type TaskStore = {
   tasks: Task[];
+  isLoading: boolean;
+  error: boolean;
 };
 
-let dataFromAPI: TaskStore = {
+const dataFromAPI: TaskStore = {
   tasks: [],
+  isLoading: false,
+  error: false,
 };
 
 type ReceivedData = {
@@ -18,52 +26,49 @@ type ReceivedData = {
 
 async function sendData(newTask: Task) {
   try {
-    console.log(newTask);
-    await TaskInstance.post("/todos/add", newTask);
+    await TaskInstance.post("/tasks/", newTask);
   } catch (err) {
     console.log(err);
   }
 }
-
-const getInitialData = async () => {
+export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
   try {
-    const response = await TaskInstance.get("/todos");
-    dataFromAPI = { tasks: response.data.tasks };
+    const response = await TaskInstance.get("/tasks");
+    return response.data;
   } catch (err) {
     console.log(err);
   }
-};
-
-getInitialData();
+});
 
 const TaskSlice = createSlice({
   name: "tasks",
   initialState: dataFromAPI,
   reducers: {
-    addTask: (state, action: PayloadAction<ReceivedData>) => {
+    addTask: (state: TaskStore, action: PayloadAction<ReceivedData>) => {
       const newTask: Task = {
         id: crypto.randomUUID(),
         title: action.payload.title,
         description: action.payload.description,
         status: action.payload.status,
       };
-
-      state.tasks.push(newTask);
-
+      if (state.tasks.length === 0) {
+        state.tasks = [newTask];
+      } else state.tasks.push(newTask);
+      console.log(state.tasks);
       sendData(newTask);
     },
 
     editTasks: (state, action: PayloadAction<Task>) => {
-      state.tasks = dataFromAPI.tasks;
       const taskIndex = state.tasks.findIndex(
         (task: Task) => task.id === action.payload.id
       );
+      if (taskIndex === -1) return;
       state.tasks[taskIndex] = action.payload;
 
       async function editTask() {
         try {
           const response = await TaskInstance.put(
-            `todos/${action.payload.id}`,
+            `/tasks/${action.payload.id}`,
             action.payload
           );
           console.log(response);
@@ -82,10 +87,22 @@ const TaskSlice = createSlice({
         (task: Task) => task.id === action.payload
       );
       async function deleteTask() {
-        await TaskInstance.delete(`tasks/${action.payload}`);
+        await TaskInstance.delete(`/tasks/${action.payload}`);
       }
       deleteTask();
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTasks.pending, (state) => ({ ...state, isLoading: true }))
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.tasks = action.payload;
+      })
+      .addCase(fetchTasks.rejected, (state) => {
+        state.isLoading = false;
+        state.error = true;
+      });
   },
 });
 

@@ -4,11 +4,13 @@ import { AddEditTask } from "./Components/Tasks/AddOrEditTask/AddEditTask";
 import { NotFound } from "./Components/Tasks/NotFound/NotFound";
 import { useSelector } from "react-redux";
 import type { RootState } from "./store/store";
+import "./App.css";
 
 function App() {
   const darkMode = useSelector(
     (state: RootState) => state.themeReducer.darkMode
   );
+
   return (
     <div className={darkMode ? "" : "light-styles"}>
       <Router>

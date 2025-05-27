@@ -9,13 +9,13 @@ import {
   type FilterElement,
   TodoStatus,
 } from "../../Types/Tasks/types";
-import type { RootState } from "../../../store/store";
+import type { RootState, AppDispatch } from "../../../store/store";
 import { deleteTasks, editTasks } from "../../../store/tasks/taskSlice";
 
 export const ShowTasks: React.FC = () => {
   const statusOptions = ["Done", "In Progress", "Todo"];
   const tasks = useSelector((state: RootState) => state.taskReducer!.tasks);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { register, watch } = useForm<FilterElement>({
     defaultValues: {
       searchByTitle: "",
@@ -70,7 +70,8 @@ export const ShowTasks: React.FC = () => {
     if (!taskData) return;
     const data = { ...taskData };
     data.status = event.target.value as TodoStatus;
-    dispatch(editTasks(taskData));
+
+    dispatch(editTasks(data));
   };
 
   useEffect(() => {

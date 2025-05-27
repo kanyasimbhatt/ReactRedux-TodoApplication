@@ -78,13 +78,10 @@ const TaskSlice = createSlice({
       }
       editTask();
     },
-    setTasks: (state: TaskStore, action: PayloadAction<Task[]>) => {
-      state.tasks = action.payload;
-    },
 
     deleteTasks: (state, action: PayloadAction<string>) => {
       state.tasks = state.tasks.filter(
-        (task: Task) => task.id === action.payload
+        (task: Task) => task.id !== action.payload
       );
       async function deleteTask() {
         await TaskInstance.delete(`/tasks/${action.payload}`);
@@ -106,5 +103,5 @@ const TaskSlice = createSlice({
   },
 });
 
-export const { addTask, editTasks, setTasks, deleteTasks } = TaskSlice.actions;
+export const { addTask, editTasks, deleteTasks } = TaskSlice.actions;
 export default TaskSlice.reducer;

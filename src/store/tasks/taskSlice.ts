@@ -32,6 +32,7 @@ async function sendData(newTask: Task) {
   }
 }
 export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
+  console.log("hello");
   try {
     const response = await TaskInstance.get("/tasks");
     return response.data;
@@ -51,11 +52,8 @@ const TaskSlice = createSlice({
         description: action.payload.description,
         status: action.payload.status,
       };
-      if (state.tasks.length === 0) {
-        state.tasks = [newTask];
-      } else state.tasks.push(newTask);
-      console.log(state.tasks);
       sendData(newTask);
+      state.tasks = [...state.tasks, newTask];
     },
 
     editTasks: (state, action: PayloadAction<Task>) => {

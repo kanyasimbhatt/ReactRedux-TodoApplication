@@ -113,7 +113,7 @@ export const AddEditForm: React.FC = () => {
         </select>
       </label>
 
-      <button type="submit" disabled={isSubmitting}>
+      <button type="submit" disabled={isSubmitting} aria-label="submit button">
         {isSubmitting ? "Loading..." : !taskData ? "Add" : "Edit"}
       </button>
       {errors.root && (

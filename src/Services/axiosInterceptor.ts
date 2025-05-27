@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const TaskInstance = axios.create({
-  baseURL: "https://ca02e611c8483d6905f1.free.beeceptor.com/api",
+  baseURL: "https://67ebca3caa794fb3222ba286.mockapi.io",
   headers: {
     "Content-Type": "application/json",
   },

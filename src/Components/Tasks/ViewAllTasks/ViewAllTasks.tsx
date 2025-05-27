@@ -13,7 +13,7 @@ const ViewAllTask: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(fetchTasks());
-  });
+  }, []);
   return (
     <>
       <Navbar buttonName="Add Task" />

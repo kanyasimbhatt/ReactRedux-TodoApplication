@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./showTasks.css";
 import { useForm } from "react-hook-form";
@@ -14,7 +14,8 @@ import { deleteTasks, editTasks } from "../../../store/tasks/taskSlice";
 
 export const ShowTasks: React.FC = () => {
   const statusOptions = ["Done", "In Progress", "Todo"];
-  const tasks = useSelector((state: RootState) => state.taskReducer!.tasks);
+  const tasksObj = useSelector((state: RootState) => state.taskReducer);
+  console.log(tasksObj);
   const dispatch = useDispatch<AppDispatch>();
   const { register, watch } = useForm<FilterElement>({
     defaultValues: {
@@ -27,7 +28,7 @@ export const ShowTasks: React.FC = () => {
   const filterContent = watch();
   const navigate = useNavigate();
 
-  const filteredTasks = tasks.filter((t: Task) => {
+  const filteredTasks = tasksObj.tasks.filter((t: Task) => {
     const searchedTitle = filterContent.searchByTitle
       ? searchTheGiven(t.title, filterContent.searchByTitle)
       : true;
@@ -66,7 +67,7 @@ export const ShowTasks: React.FC = () => {
     event: React.ChangeEvent<HTMLSelectElement>,
     id: string
   ) => {
-    const taskData = tasks.find((task: Task) => task.id === id);
+    const taskData = tasksObj.tasks.find((task: Task) => task.id === id);
     if (!taskData) return;
     const data = { ...taskData };
     data.status = event.target.value as TodoStatus;
@@ -74,17 +75,13 @@ export const ShowTasks: React.FC = () => {
     dispatch(editTasks(data));
   };
 
-  useEffect(() => {
-    localStorage.setItem("tasks-array", JSON.stringify(tasks));
-  }, [tasks]);
-
   return (
     <>
       <FilterTask register={register} />
       <div className="show-task">
         {filteredTasks.length === 0 && (
           <div className="header-wrapper">
-            <h3>No Tasks yet!</h3>
+            {tasksObj.isLoading ? <h3>Loading...</h3> : <h3>No Tasks Yet!</h3>}
           </div>
         )}
 
@@ -116,12 +113,14 @@ export const ShowTasks: React.FC = () => {
                 <button
                   className="edit-button"
                   onClick={() => handleTaskEdit(task.id)}
+                  aria-label="edit task button"
                 >
                   Edit
                 </button>
                 <button
                   className="edit-button"
                   onClick={() => handleTaskDelete(task.id)}
+                  aria-label="delete task button"
                 >
                   Delete
                 </button>

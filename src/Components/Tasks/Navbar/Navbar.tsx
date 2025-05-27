@@ -37,10 +37,15 @@ export const Navbar: React.FC<ButtonTextType> = ({ buttonName }) => {
       </div>
       <div className="navbar-button">
         <button onClick={handleNavbarButtonClick}>{buttonName}</button>
-        <button className="dark-light-button" onClick={handleClickOnMode}>
+        <button
+          className="dark-light-button"
+          onClick={handleClickOnMode}
+          aria-label="dark light mode button"
+        >
           <img
             src={!darkMode ? SunLogo : MoonLogo}
             className="navbar-logo-dl"
+            alt="logo for light dark mode"
           />
         </button>
       </div>

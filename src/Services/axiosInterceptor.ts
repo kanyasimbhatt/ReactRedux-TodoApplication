@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const TaskInstance = axios.create({
-  baseURL: "https://67ebca3caa794fb3222ba286.mockapi.io",
+  baseURL: "https://react-practical-19-backend.onrender.com",
   headers: {
     "Content-Type": "application/json",
   },
@@ -13,7 +13,6 @@ TaskInstance.interceptors.request.use(
   },
   (error) => {
     console.log("Request:", error);
-    Promise.reject(error);
   }
 );
 

@@ -15,7 +15,6 @@ import { deleteTasks, editTasks } from "../../../store/tasks/taskSlice";
 export const ShowTasks: React.FC = () => {
   const statusOptions = ["Done", "In Progress", "Todo"];
   const tasksObj = useSelector((state: RootState) => state.taskReducer);
-  console.log(tasksObj);
   const dispatch = useDispatch<AppDispatch>();
   const { register, watch } = useForm<FilterElement>({
     defaultValues: {

@@ -2,14 +2,15 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { type RootState } from "../../../store/store";
+import { type AppDispatch, type RootState } from "../../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { z } from "zod";
 import { useEffect } from "react";
 import "./AddEditForm.css";
 import { type Task } from "../../Types/Tasks/types";
 import { TodoStatus } from "../../Types/Tasks/types";
-import { addTask, editTasks } from "../../../store/tasks/taskSlice";
+// import { addTask, editTasks } from "../../../store/tasks/taskSlice";
+import { addTasks, editTasks } from "../../../store/tasks/taskSlice";
 
 const schema = z.object({
   id: z.string(),
@@ -25,7 +26,7 @@ export const AddEditForm: React.FC = () => {
   const navigate = useNavigate();
   const tasks = useSelector((state: RootState) => state.taskReducer!.tasks);
   const theme = useSelector((state: RootState) => state.themeReducer.darkMode);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const taskData = tasks.find((task: Task) => task.id === taskId);
   const defaultValue = {
     id: "",
@@ -47,9 +48,10 @@ export const AddEditForm: React.FC = () => {
 
   const onSubmit: SubmitHandler<TaskFormFields> = (data) => {
     if (taskData) {
-      dispatch(editTasks({ ...data }));
+      const totalData: Task = { ...taskData, ...data };
+      dispatch(editTasks(totalData));
     } else {
-      dispatch(addTask(data));
+      dispatch(addTasks(data));
     }
     navigate("/");
   };
@@ -113,7 +115,7 @@ export const AddEditForm: React.FC = () => {
         </select>
       </label>
 
-      <button type="submit" disabled={isSubmitting} aria-label="submit button">
+      <button type="submit" disabled={isSubmitting} aria-label="submit">
         {isSubmitting ? "Loading..." : !taskData ? "Add" : "Edit"}
       </button>
       {errors.root && (

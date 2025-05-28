@@ -1,8 +1,4 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  type PayloadAction,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { TaskInstance } from "../../Services/axiosInterceptor";
 import { type Task, type TodoStatus } from "../../Components/Types/Tasks/types";
 
@@ -18,21 +14,13 @@ const dataFromAPI: TaskStore = {
   error: false,
 };
 
-type ReceivedData = {
+export type ReceivedData = {
   title: string;
   description: string;
   status: TodoStatus;
 };
 
-async function sendData(newTask: Task) {
-  try {
-    await TaskInstance.post("/tasks/", newTask);
-  } catch (err) {
-    console.log(err);
-  }
-}
 export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
-  console.log("hello");
   try {
     const response = await TaskInstance.get("/tasks");
     return response.data;
@@ -41,52 +29,52 @@ export const fetchTasks = createAsyncThunk("tasks/fetchTasks", async () => {
   }
 });
 
+export const addTasks = createAsyncThunk(
+  "tasks/addTasks",
+  async (data: ReceivedData) => {
+    const newTask: Task = {
+      id: crypto.randomUUID(),
+      title: data.title,
+      description: data.description,
+      status: data.status,
+    };
+    try {
+      const response = await TaskInstance.post("/tasks/", newTask);
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+export const editTasks = createAsyncThunk(
+  "tasks/editTasks",
+  async (data: Task) => {
+    try {
+      const response = await TaskInstance.put(`/tasks/${data.id}`, data);
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
+export const deleteTasks = createAsyncThunk(
+  "tasks/deleteTasks",
+  async (id: string) => {
+    try {
+      const response = await TaskInstance.delete(`/tasks/${id}`);
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+);
+
 const TaskSlice = createSlice({
   name: "tasks",
   initialState: dataFromAPI,
-  reducers: {
-    addTask: (state: TaskStore, action: PayloadAction<ReceivedData>) => {
-      const newTask: Task = {
-        id: crypto.randomUUID(),
-        title: action.payload.title,
-        description: action.payload.description,
-        status: action.payload.status,
-      };
-      sendData(newTask);
-      state.tasks = [...state.tasks, newTask];
-    },
-
-    editTasks: (state, action: PayloadAction<Task>) => {
-      const taskIndex = state.tasks.findIndex(
-        (task: Task) => task.id === action.payload.id
-      );
-      if (taskIndex === -1) return;
-      state.tasks[taskIndex] = action.payload;
-
-      async function editTask() {
-        try {
-          const response = await TaskInstance.put(
-            `/tasks/${action.payload.id}`,
-            action.payload
-          );
-          console.log(response);
-        } catch (err) {
-          console.log(err);
-        }
-      }
-      editTask();
-    },
-
-    deleteTasks: (state, action: PayloadAction<string>) => {
-      state.tasks = state.tasks.filter(
-        (task: Task) => task.id !== action.payload
-      );
-      async function deleteTask() {
-        await TaskInstance.delete(`/tasks/${action.payload}`);
-      }
-      deleteTask();
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchTasks.pending, (state) => ({ ...state, isLoading: true }))
@@ -97,9 +85,34 @@ const TaskSlice = createSlice({
       .addCase(fetchTasks.rejected, (state) => {
         state.isLoading = false;
         state.error = true;
+      })
+      .addCase(addTasks.fulfilled, (state, action) => {
+        state.tasks.push(action.payload);
+      })
+      .addCase(addTasks.rejected, (state) => {
+        state.error = true;
+      })
+      .addCase(editTasks.fulfilled, (state, action) => {
+        const index = state.tasks.findIndex(
+          (task: Task) => task.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.tasks[index] = action.payload;
+        }
+      })
+      .addCase(editTasks.rejected, (state) => {
+        state.error = true;
+      })
+      .addCase(deleteTasks.fulfilled, (state, action) => {
+        state.tasks = state.tasks.filter(
+          (task: Task) => task.id !== action.payload.id
+        );
+      })
+      .addCase(deleteTasks.rejected, (state) => {
+        state.error = true;
       });
   },
 });
 
-export const { addTask, editTasks, deleteTasks } = TaskSlice.actions;
+// export const {  } = TaskSlice.actions;
 export default TaskSlice.reducer;

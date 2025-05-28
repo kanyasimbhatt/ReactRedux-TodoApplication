@@ -1,0 +1,77 @@
+.light-styles {
+  min-width: calc(100vh - 70px - 30px - 70px);
+}
+
+.show-task {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 0 90px 0 90px;
+  margin-top: 60px;
+}
+
+.card-wrapper {
+  height: 230px;
+  width: 250px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.349);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.header-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.Done {
+  background-color: rgb(72, 139, 72);
+}
+
+.Todo {
+  background-color: rgb(143, 70, 70);
+}
+
+.In {
+  background-color: rgb(73, 73, 131);
+}
+
+.options-select {
+  border: none;
+  width: 100%;
+  height: 30px;
+  border-radius: 7px;
+  background-color: rgba(255, 255, 255, 0.425);
+  color: black;
+}
+
+.edit-delete-button {
+  display: flex;
+  gap: 30px;
+}
+
+.tasks-title,
+.tasks-description {
+  height: 20%;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  width: 230px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 1100px) {
+  .show-task {
+    justify-content: center;
+  }
+}
